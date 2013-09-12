@@ -27,14 +27,51 @@ class Dessert
 end
 
 ### tests
-cake      = Dessert.new('Cake', 400)
-apple     = Dessert.new('Apple', 100)
+cake      = Dessert.new('Cake'     , 400)
+apple     = Dessert.new('Apple'    , 100)
 ice_cream = Dessert.new('Ice Cream', 300)
-yogurt    = Dessert.new('Yogurt', 150)
+yogurt    = Dessert.new('Yogurt'   , 150)
 raise unless cake.delicious?      && !cake.healthy?
 raise unless apple.delicious?     && apple.healthy?
 raise unless ice_cream.delicious? && !ice_cream.healthy?
 raise unless yogurt.delicious?    && yogurt.healthy?
+
+
+
+## b) JellyBean Class
+
+### code
+class JeyllyBean < Dessert
+  def initialize(name, calories, flavor)
+    @flavor = flavor
+    super(name, calories)
+  end
+  attr_accessor :flavor
+  def delicious?
+    return false if self.flavor.downcase == "black licorice"
+    super
+  end
+end
+
+### tests
+red     = JeyllyBean.new('Jelly Bean',  50,            'red')
+green   = JeyllyBean.new('Jelly Bean', 100,          'green')
+blue    = JeyllyBean.new('Jelly Bean', 150,           'blue')
+cyan    = JeyllyBean.new('Jelly Bean', 200,           'cyan')
+yellow  = JeyllyBean.new('Jelly Bean', 250,         'yellow')
+magenta = JeyllyBean.new('Jelly Bean', 300,        'magenta')
+black1  = JeyllyBean.new('Jelly Bean', 350, 'Black Licorice')
+black2  = JeyllyBean.new('Jelly Bean', 150, 'black licorice')
+raise unless red.delicious?     && red.healthy?
+raise unless green.delicious?   && green.healthy?
+raise unless blue.delicious?    && blue.healthy?
+raise unless cyan.delicious?    && !cyan.healthy?
+raise unless yellow.delicious?  && !yellow.healthy?
+raise unless magenta.delicious? && !magenta.healthy?
+raise unless !black1.delicious? && !black1.healthy?
+raise unless !black2.delicious? && black2.healthy?
+
+
 
 
 
