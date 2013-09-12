@@ -75,3 +75,52 @@ raise unless !black2.delicious? && black2.healthy?
 
 
 
+
+
+
+# Part 2 - Object Oriented Programming
+
+### code
+class Class
+  def attr_accessor_with_history(attr_name)
+    attr_name = attr_name.to_s
+    attr_reader attr_name
+    class_eval %Q"
+      def #{attr_name}_history
+        return @#{attr_name}_history if defined? @#{attr_name}_history
+        @#{attr_name}_history = [nil]
+      end
+      def #{attr_name}=(new_value)
+        @#{attr_name}_history = [nil] unless defined? @#{attr_name}_history
+        @#{attr_name}_history << new_value
+        @#{attr_name} = new_value
+      end"
+  end
+end
+
+### tests
+class SomeClass
+  attr_accessor_with_history :value_a
+  attr_accessor_with_history :value_b
+end
+some_object = SomeClass.new
+raise unless some_object.value_a_history == [nil]
+some_object.value_a = 1
+raise unless some_object.value_a_history == [nil, 1]
+some_object.value_a = 2
+raise unless some_object.value_a_history == [nil, 1, 2]
+some_object.value_b = 3
+raise unless some_object.value_b_history == [nil, 3]
+some_object.value_b = :hello
+raise unless some_object.value_b_history == [nil, 3, :hello]
+some_object.value_b = "world"
+raise unless some_object.value_b_history == [nil, 3, :hello, "world"]
+
+
+
+
+
+
+
+
+
