@@ -87,13 +87,11 @@ class Class
     attr_reader attr_name
     class_eval %Q"
       def #{attr_name}_history
-        return @#{attr_name}_history if defined? @#{attr_name}_history
-        @#{attr_name}_history = [nil]
+        return (@#{attr_name}_history = [nil]) unless defined? @#{attr_name}_history
+        @#{attr_name}_history
       end
       def #{attr_name}=(new_value)
-        @#{attr_name}_history = [nil] unless defined? @#{attr_name}_history
-        @#{attr_name}_history << new_value
-        @#{attr_name} = new_value
+        @#{attr_name}_history = self.#{attr_name}_history + (@#{attr_name} = [new_value])
       end"
   end
 end
