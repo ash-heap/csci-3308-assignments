@@ -1,0 +1,164 @@
+<html>
+  <head>
+    <title>CSCI 3308 (Principals of Programming Languages) - Assignment 2: Programming in Ruby</title>
+    <meta content="">
+    <style></style>
+    <h1>CSCI 3308 - Principals of Programming Languages</h1>
+    <h2>Assignment 2: Programming in Ruby</h2>
+<div class="no-overflow"><p class="problem-header">There are 4 parts to this assignment, some parts have multiple sections, please ensure that you complete all parts and sections.</p>
+<h1 class="problem-header" style="text-align: center;"><strong>This assignment is due Tuesday 9/17 at 11:55pm</strong></h1>
+<p class="problem-header" style="text-align: center;"><span style="color: #ff0000;"><strong>PLEASE PUT ALL OF THE EXERCISES INTO 1 RUBY FILE AND SUBMIT IT TO MOODLE<br></strong></span></p>
+<h2 class="problem-header">What to Turn in:</h2>
+<ol>
+<li>You will turn in your Ruby file to Moodle.</li>
+<li>We will conduct interview grading for this assignment next week, meaning you will schedule a time to demonstrate your running ruby programs to a TA.</li>
+</ol>
+<p><b style="font-size: 2.25em; line-height: 1;">Part 1 - Classes</b></p>
+<p><b><i>a)</i></b>: Create a class&nbsp;<code>Dessert</code>&nbsp;with getters and setters for&nbsp;<code>name</code>&nbsp;and&nbsp;<code>calories</code>. Define instance methods&nbsp;<code>healthy?</code>, which returns&nbsp;<code>true</code>&nbsp;if a dessert has less than 200 calories, and&nbsp;<code>delicious?</code>&nbsp;which returns&nbsp;<code>true</code>&nbsp;for all desserts.</p>
+<p>Here is the framework:</p>
+<pre>class Dessert
+    def initialize(name, calories)
+        # Your code here
+    end
+
+    def healthy?
+        # Your code here
+    end
+
+    def delicious?
+        # Your code here
+    end
+end</pre>
+<p>Note: You may define additional helper methods.</p>
+<p><b><i>b)</i></b>: Create a class&nbsp;<code>JellyBean</code>&nbsp;that extends&nbsp;<code>Dessert</code>, and add a getter and setter for&nbsp;<code>flavor</code>. Modify&nbsp;<code>delicious?</code>&nbsp;to return&nbsp;<code>false</code>&nbsp;if the flavor is "black licorice" (but&nbsp;<code>delicious?</code>&nbsp;should still return&nbsp;<code>true</code>&nbsp;for all other flavors and for all non-<code>JellyBean</code>&nbsp;desserts).</p>
+<p>The&nbsp;<code>JellyBean</code>&nbsp;class should look like this:</p>
+<pre>class JellyBean &lt; Dessert
+    def initialize(name, calories, flavor)
+        # Your code here
+    end
+
+    def delicious?
+        # Your code here
+    end
+end</pre>
+<p>Note: As before, you may define additional helper methods.</p>
+<h2><em><span style="color: #ff0000;">**Note: Things start to get more difficult here**</span></em></h2>
+<h1>Part 2 - Object Oriented Programming</h1>
+<p>In lecture (Referring to the MOOC), we saw how&nbsp;<code>attr_accessor</code>&nbsp;uses metaprogramming to create getters and setters for object attributes on the fly.</p>
+<p>Define a method&nbsp;<code>attr_accessor_with_history</code>&nbsp;that provides the same functionality as&nbsp;<code>attr_accessor</code>&nbsp;but also tracks every value the attribute has ever taken. The following example shows the basic behavior of the new accessor:</p>
+<pre>class Foo
+    attr_accessor_with_history :bar
+end
+
+f = Foo.new     # =&gt; #&lt;Foo:0x127e678&gt;
+f.bar = 3       # =&gt; 3
+f.bar = :wowzo  # =&gt; :wowzo
+f.bar = 'boo!'  # =&gt; 'boo!'
+f.bar_history   # =&gt; [nil, 3, :wowzo, 'boo!']</pre>
+<p>Here are some hints and guidelines to get you rolling:</p>
+<ul>
+<li>
+<p>The first thing to notice is that if we define&nbsp;<code>attr_accessor_with_history</code>&nbsp;in class&nbsp;<code>Class</code>, we can use it as in the snippet above. This is because, as ELLS mentions, a class in Ruby is simply an object of class<code>Class</code>. (If that makes your brain hurt, don't worry about it for now. It'll come eventually.)</p>
+</li>
+<li>
+<p>The second thing to notice is that Ruby provides a method&nbsp;<code>class_eval</code>&nbsp;that takes a string and evaluates it in the context of the current class, that is, the class from which you're calling<code>attr_accessor_with_history</code>. This string will need to contain a method definition that implements a<code>setter-with-history</code>&nbsp;for the desired attribute&nbsp;<code>attr_name</code>.</p>
+</li>
+<li>
+<p><code>#bar_history</code>&nbsp;should always return an&nbsp;<code>Array</code>&nbsp;of elements, even if no values have been assigned yet.</p>
+</li>
+<li>
+<p>Don't forget that the very first time the attribute receives a value, its history array will have to be initialized.</p>
+</li>
+<li>
+<p>Don't forget that instance variables are referred to as&nbsp;<code>@bar</code>&nbsp;within getters and setters, as explained in Section 3.4 of ELLS.</p>
+</li>
+<li>
+<p>Although the existing&nbsp;<code>attr_accessor</code>&nbsp;can handle multiple arguments (e.g.&nbsp;<code>attr_accessor :foo, :bar</code>), your version just needs to handle a single argument. However, it should be able to track multiple instance variables per class, with any legal class names or variable names, so it should work if used this way:</p>
+<pre>class SomeOtherClass
+    attr_accessor_with_history :foo
+    attr_accessor_with_history :bar
+end</pre>
+</li>
+<li>
+<p>History of instance variables should be maintained separately for each object instance. That is, if you do</p>
+<pre>f = Foo.new
+f.bar = 1
+f.bar = 2
+f = Foo.new
+f.bar = 4
+f.bar_history</pre>
+then the last line should return&nbsp;<code>[nil, 4]</code>&nbsp;rather than&nbsp;<code>[nil, 1, 2, 4]</code>.</li>
+</ul>
+<p>Here is the skeleton to get you started:</p>
+<pre>class Class
+    def attr_accessor_with_history(attr_name)
+        attr_name = attr_name.to_s       # make sure it's a string
+        attr_reader attr_name            # create the attribute's getter
+        attr_reader attr_name+"_history" # create bar_history getter
+        class_eval "your code here, use %Q for multiline strings"
+    end
+end
+
+class Foo
+    attr_accessor_with_history :bar
+end</pre>
+<p>Example test case:</p>
+<pre>f = Foo.new
+f.bar = 1
+f.bar = 2
+f.bar_history # =&gt; if your code works, should be [nil, 1, 2]</pre>
+<h1>Part 3 - More OOP</h1>
+<p><b><i>a) — Currency conversion (ELLS 3.11)</i></b>: Extend the currency-conversion example from lecture so that code such as the following will work:</p>
+<ul>
+<li><code>5.dollars.in(:euros)</code></li>
+<li><code>10.euros.in(:rupees)</code></li>
+</ul>
+<p>You should support the currencies&nbsp;<code>dollars</code>,&nbsp;<code>euros</code>,&nbsp;<code>rupees</code>,&nbsp;<code>yen</code>&nbsp;where the conversions are:</p>
+<ul>
+<li><code>rupees</code>&nbsp;to&nbsp;<code>dollars</code>, multiply by 0.019,</li>
+<li><code>yen</code>&nbsp;to&nbsp;<code>dollars</code>, multiply by 0.013,</li>
+<li><code>euro</code>&nbsp;to&nbsp;<code>dollars</code>, multiply by 1.292.</li>
+</ul>
+<p>Both the singular and plural forms of each currency should be acceptable, e.g.&nbsp;<code>1.dollar.in(:rupees)</code>&nbsp;and<code>10.rupees.in(:euro)</code>&nbsp;should work.</p>
+<p>You can use the code shown in lecture as a starting point if you wish. It is repeated below:</p>
+<pre>class Numeric
+ @@currencies = {'yen' =&gt; 0.013, 'euro' =&gt; 1.292, 'rupee' =&gt; 0.019}
+ def method_missing(method_id)
+   singular_currency = method_id.to_s.gsub( /s$/, '')
+   if @@currencies.has_key?(singular_currency)
+     self * @@currencies[singular_currency]
+   else
+     super
+   end
+ end
+end
+</pre>
+<p></p>
+<p><b><i>b) — Palindromes</i></b>: Adapt your solution from the "palindromes" question so that instead of writing&nbsp;<code>palindrome?("foo")</code>&nbsp;you can write&nbsp;<code>"foo".palindrome?</code>&nbsp;(Hint: this should require fewer than 5 lines of code.)</p>
+<p><b><i>c) — Palindromes again</i></b>: Adapt your palindrome solution so that it works on&nbsp;<code>Enumerables</code>. That is:<br><code>[1,2,3,2,1].palindrome? # =&gt; true</code></p>
+<p>It's not necessary for the collection's elements to be palindromes themselves--only that the top-level collection be a palindrome. (Hint: this should require fewer than 5 lines of code.) Although hashes are considered&nbsp;<code>Enumerables</code>, your solution does not need to work with hashes, though it should not error.</p>
+<h1>Part 4 - Blocks</h1>
+<p>Given two collections (of possibly different lengths), we want to get the Cartesian product of the sequences. A Cartesian product is a sequence that enumerates every possible pair from the two collections, where the pair consists of one element from each collection. For example, the Cartesian product (denoted by ×) of the sequences&nbsp;<code>a = [:a, :b, :c]</code>&nbsp;and&nbsp;<code>b = [4, 5]</code>&nbsp;is:</p>
+<pre>a × b = [ [:a,4], [:a,5], [:b,4], [:b,5], [:c,4], [:c,5] ]</pre>
+<p>Create a constructor for the class&nbsp;<code>CartesianProduct</code>&nbsp;that that takes two sequences as arguments, these values will define the behavior of your object. Define&nbsp;<code>each</code>&nbsp;as an instance method for&nbsp;<code>CartesianProduct</code>. Your method should return an iterator which yields the cartesian product of the two sequences used in the class' constructor. The iterator should yield the values one at a time as 2 element arrays.</p>
+<p>It doesn't matter what order the elements are returned in. So for the above example, the ordering<code>[ [:a,4], [:b,4], [:c,4], [:a,5], [:b,5], [:c,5] ]</code>&nbsp;would be correct as well.</p>
+<p>It does matter that within each pair, the order of the elements matches the order in which the original sequences were provided. That is,&nbsp;<code>[:a,4]</code>&nbsp;is a member of the Cartesian product&nbsp;<code>a × b</code>&nbsp;but&nbsp;<code>[4,:a]</code>&nbsp;is not. (Instead,&nbsp;<code>[4,:a]</code>&nbsp;is a member of the Cartesian product&nbsp;<code>b × a</code>.)</p>
+<p>Below is the code skeleton:</p>
+<pre>class CartesianProduct
+    include Enumerable
+    # Your code here
+end</pre>
+<p>Example test cases:</p>
+<pre>c = CartesianProduct.new([:a,:b], [4,5])
+c.each { |elt| puts elt.inspect }
+# [:a, 4]
+# [:a, 5]
+# [:b, 4]
+# [:b, 5]
+
+c = CartesianProduct.new([:a,:b], [])
+c.each { |elt| puts elt.inspect }
+# Nothing printed since Cartesian product of anything with an empty collection is empty</pre></div>
+  </head>
+  <body></body>
+</html>
