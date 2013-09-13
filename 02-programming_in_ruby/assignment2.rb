@@ -76,8 +76,6 @@ raise unless !black2.delicious? && black2.healthy?
 
 
 
-
-
 # Part 2 - Object Oriented Programming
 
 ### code
@@ -95,6 +93,8 @@ class Class
       end"
   end
 end
+
+
 
 ### tests
 class SomeClass
@@ -118,6 +118,23 @@ raise unless some_object.value_b_history == [nil, 3, :hello, "world"]
 
 
 
+# Part 3 - More OOP
+
+## a) Currency Conversion
+
+
+### code
+class Numeric
+  @@currencies = {"yen" => 0.013, "euro" => 1.292, "rupee" => 0.019}
+  def method_missing(method_id)
+    singular_currency = method_id.to_s.gsub(/s$/, "")
+    if @@currencies.has_key?(singular_currency)
+      self * @@currencies[singular_currency]
+    else
+      super
+    end
+  end
+end
 
 
 
