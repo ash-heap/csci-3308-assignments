@@ -156,8 +156,6 @@ class Currency
   attr_reader :value, :unit
 end
 
-
-
 ### tests
 epsilon = 0.0000001
 
@@ -197,4 +195,37 @@ raise unless (5.rupee.in(:yens) - 5/0.019*0.013).abs <= epsilon
 raise unless (5.rupees.in(:euro) - 5/0.019*1.292).abs <= epsilon
 raise unless (5.rupee.in(:euros) - 5/0.019*1.292).abs <= epsilon
 
+
+
+## b) Palindromes
+
+### code
+class String
+  def palindrome?
+      word_chars = self.downcase.gsub /\W/, ''
+      word_chars == word_chars.reverse
+  end
+end
+
+### tests
+raise unless "A man, a plan, a canal -- Panama".palindrome?
+raise unless "Madam, I'm Adam!".palindrome?
+raise if "Abracadabra".palindrome?
+
+
+
+## c) Palindromes Again
+
+### code
+module Enumerable
+  def palindrome?
+      self.to_a == self.to_a.reverse
+  end
+end
+
+### tests
+raise unless [1, 2, 3, 2, 1].palindrome?
+raise if ({"one" => 1, "two" => 2, "three" => 3, "two" => 2, "one" => 1}).palindrome?
+raise unless ["palindrome", "this", "is", "this", "palindrome"].palindrome?
+raise if ["palindrome", "this", "is", "not"].palindrome?
 
