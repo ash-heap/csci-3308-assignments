@@ -229,3 +229,33 @@ raise if ({"one" => 1, "two" => 2, "three" => 3, "two" => 2, "one" => 1}).palind
 raise unless ["palindrome", "this", "is", "this", "palindrome"].palindrome?
 raise if ["palindrome", "this", "is", "not"].palindrome?
 
+
+
+
+
+
+# Part 4 - Blocks
+
+### code
+class CartesianProduct
+  include Enumerable
+  def initialize(left, right)
+    @left  = left
+    @right = right
+  end
+  def each
+    @left.each { |l| @right.each { |r| yield [l, r] } }
+  end
+end
+
+### tests
+a = CartesianProduct.new([:a, :b], [4, 5])
+b = CartesianProduct.new([:a, :b], [])
+c = CartesianProduct.new([:a, :b, :c], [4, 5])
+raise unless a.to_a.sort == [[:a, 4], [:a, 5], [:b, 4], [:b, 5]].sort
+raise unless b.to_a.sort == [].sort
+raise unless c.to_a.sort == [[:a, 4], [:a, 5], [:b, 4], [:b, 5], [:c, 4], [:c, 5]].sort
+
+
+
+
