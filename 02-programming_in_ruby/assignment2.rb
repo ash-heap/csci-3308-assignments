@@ -118,24 +118,83 @@ raise unless some_object.value_b_history == [nil, 3, :hello, "world"]
 
 
 
+
 # Part 3 - More OOP
 
 ## a) Currency Conversion
 
-
 ### code
 class Numeric
-  @@currencies = {"yen" => 0.013, "euro" => 1.292, "rupee" => 0.019}
   def method_missing(method_id)
-    singular_currency = method_id.to_s.gsub(/s$/, "")
-    if @@currencies.has_key?(singular_currency)
-      self * @@currencies[singular_currency]
-    else
-      super
-    end
+    return Currency.new(self, method_id) if Currency.unit?(method_id)
+    super
   end
 end
 
+class Symbol
+  def singular
+    self.to_s.gsub(/s$/, "").to_sym
+  end
+end
 
+class InvalidCurrencyUnit < StandardError ; end
+class Currency
+  def initialize(value, unit)
+    @value = value
+    @unit  = self.class.validate_unit(unit.singular)
+  end
+  @@units = {:dollar => 1, :yen => 0.013, :euro => 1.292, :rupee => 0.019}
+  def self.unit?(unit)
+    @@units.has_key? unit.singular
+  end
+  def in(out_unit)
+    self.value / @@units[self.unit] * @@units[self.class.validate_unit(out_unit.singular)]
+  end
+  def self.validate_unit(unit)
+    raise InvalidCurrencyUnit unless @@units[unit] ; unit
+  end
+  attr_reader :value, :unit
+end
+
+
+
+### tests
+epsilon = 0.0000001
+
+raise unless (5.dollars.in(:dollar) - 5).abs <= epsilon
+raise unless (5.dollar.in(:dollars) - 5).abs <= epsilon
+raise unless (5.dollars.in(:rupee) - 5*0.019).abs <= epsilon
+raise unless (5.dollar.in(:rupees) - 5*0.019).abs <= epsilon
+raise unless (5.dollars.in(:yen) - 5*0.013).abs <= epsilon
+raise unless (5.dollar.in(:yens) - 5*0.013).abs <= epsilon
+raise unless (5.dollars.in(:euro) - 5*1.292).abs <= epsilon
+raise unless (5.dollar.in(:euros) - 5*1.292).abs <= epsilon
+
+raise unless (5.euros.in(:dollar) - 5/1.292).abs <= epsilon
+raise unless (5.euro.in(:dollars) - 5/1.292).abs <= epsilon
+raise unless (5.euros.in(:rupee) - 5/1.292*0.019).abs <= epsilon
+raise unless (5.euro.in(:rupees) - 5/1.292*0.019).abs <= epsilon
+raise unless (5.euros.in(:yen) - 5/1.292*0.013).abs <= epsilon
+raise unless (5.euro.in(:yens) - 5/1.292*0.013).abs <= epsilon
+raise unless (5.euros.in(:euro) - 5).abs <= epsilon
+raise unless (5.euro.in(:euros) - 5).abs <= epsilon
+
+raise unless (5.yens.in(:dollar) - 5/0.013).abs <= epsilon
+raise unless (5.yen.in(:dollars) - 5/0.013).abs <= epsilon
+raise unless (5.yens.in(:rupee) - 5/0.013*0.019).abs <= epsilon
+raise unless (5.yen.in(:rupees) - 5/0.013*0.019).abs <= epsilon
+raise unless (5.yens.in(:yen) - 5/0.013*0.013).abs <= epsilon
+raise unless (5.yen.in(:yens) - 5/0.013*0.013).abs <= epsilon
+raise unless (5.yens.in(:euro) - 5/0.013*1.292).abs <= epsilon
+raise unless (5.yen.in(:euros) - 5/0.013*1.292).abs <= epsilon
+
+raise unless (5.rupees.in(:dollar) - 5/0.019).abs <= epsilon
+raise unless (5.rupee.in(:dollars) - 5/0.019).abs <= epsilon
+raise unless (5.rupees.in(:rupee) - 5).abs <= epsilon
+raise unless (5.rupee.in(:rupees) - 5).abs <= epsilon
+raise unless (5.rupees.in(:yen) - 5/0.019*0.013).abs <= epsilon
+raise unless (5.rupee.in(:yens) - 5/0.019*0.013).abs <= epsilon
+raise unless (5.rupees.in(:euro) - 5/0.019*1.292).abs <= epsilon
+raise unless (5.rupee.in(:euros) - 5/0.019*1.292).abs <= epsilon
 
 
