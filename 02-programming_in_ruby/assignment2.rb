@@ -157,7 +157,8 @@ class Currency
     self.value / @@units[self.unit] * @@units[self.class.validate_unit(out_unit.singular)]
   end
   def self.validate_unit(unit)
-    raise InvalidCurrencyUnit unless @@units[unit] ; unit
+    raise InvalidCurrencyUnit unless @@units[unit]
+    unit
   end
   attr_reader :value, :unit
 end
