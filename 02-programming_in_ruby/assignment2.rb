@@ -1,5 +1,6 @@
 # File: assignment.rb
 # Written: 09/12/2013.255 - Michael R. Shannon
+# Updated: 09/18/2013.261 - Michael R. Shannon
 #
 
 
@@ -89,7 +90,7 @@ class Class
         @#{attr_name}_history
       end
       def #{attr_name}=(new_value)
-        @#{attr_name}_history = self.#{attr_name}_history + (@#{attr_name} = [new_value])
+        @#{attr_name}_history = self.#{attr_name}_history + [(@#{attr_name} = new_value)]
       end"
   end
 end
@@ -104,14 +105,19 @@ end
 some_object = SomeClass.new
 raise unless some_object.value_a_history == [nil]
 some_object.value_a = 1
+raise unless some_object.value_a
 raise unless some_object.value_a_history == [nil, 1]
 some_object.value_a = 2
+raise unless some_object.value_a == 2
 raise unless some_object.value_a_history == [nil, 1, 2]
 some_object.value_b = 3
+raise unless some_object.value_b == 3
 raise unless some_object.value_b_history == [nil, 3]
 some_object.value_b = :hello
+raise unless some_object.value_b == :hello
 raise unless some_object.value_b_history == [nil, 3, :hello]
 some_object.value_b = "world"
+raise unless some_object.value_b == "world"
 raise unless some_object.value_b_history == [nil, 3, :hello, "world"]
 
 
