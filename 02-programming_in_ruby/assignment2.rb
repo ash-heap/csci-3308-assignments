@@ -80,6 +80,12 @@ raise unless !black2.delicious? && black2.healthy?
 # Part 2 - Object Oriented Programming
 
 ### code
+# Used the following link to understand the class_eval method.  However, it
+# happens to contain the solution to this problem. Since I have seen the
+# solution it may have influenced my own code.
+#
+#   http://stackoverflow.com/questions/9561072/ruby-using-class-eval-to-define-methods
+#
 class Class
   def attr_accessor_with_history(attr_name)
     attr_name = attr_name.to_s
